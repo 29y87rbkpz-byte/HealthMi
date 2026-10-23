@@ -1,13 +1,11 @@
 name: Build HealthMi iOS
 
 on:
-  push:
-    branches: [ main ]
   workflow_dispatch:
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: macos-13
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
@@ -15,21 +13,21 @@ jobs:
       - name: Build
         run: |
           xcodebuild \
-            -project HealthMi.xcodeproj \
-            -scheme HealthMi \
-            -configuration Release \
-            -sdk iphoneos \
-            CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGNING_ALLOWED=NO \
-            CODE_SIGN_IDENTITY=""
+          -project HealthMi.xcodeproj \
+          -scheme HealthMi \
+          -configuration Release \
+          -sdk iphoneos \
+          CODE_SIGNING_REQUIRED=NO \
+          CODE_SIGNING_ALLOWED=NO \
+          CODE_SIGN_IDENTITY=""
 
       - name: Package app
         run: |
-          APP_PATH=$(find ./DerivedData/Build/Products/Release-iphoneos -name "HealthMi.app")
-          zip -r HealthMi.app.zip "$APP_PATH"
+          APP_PATH=$(find . -name "HealthMi.app" -type d | head -n 1)
+          zip -r HealthMi.zip "$APP_PATH"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: HealthMi-build
-          path: HealthMi.app.zip
+          name: HealthMi-iOS
+          path: HealthMi.zip
